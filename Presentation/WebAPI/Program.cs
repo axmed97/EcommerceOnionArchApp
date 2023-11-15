@@ -1,3 +1,4 @@
+using Application;
 using Application.Validators.Products;
 using FluentValidation.AspNetCore;
 using Infrastructure;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddPersistenServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
 
 builder.Services.AddStorage<LocalStorage>();
 
