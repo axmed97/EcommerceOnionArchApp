@@ -1,7 +1,9 @@
 ﻿using Application.Abstraction.Storage;
+using Application.Abstraction.Token;
 using Infrastructure.Enums;
 using Infrastructure.Services.Storages;
 using Infrastructure.Services.Storages.LocalStorage;
+using Infrastructure.Services.Token;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure
@@ -11,6 +13,7 @@ namespace Infrastructure
         public static void AddInfrastructureServices(this IServiceCollection serviceDescriptors)
         {
             serviceDescriptors.AddScoped<IStorageService, StorageService>();
+            serviceDescriptors.AddScoped<ITokenHandler, TokenHandler>();
         }
 
         public static void AddStorage<T>(this IServiceCollection serviceDescriptors)

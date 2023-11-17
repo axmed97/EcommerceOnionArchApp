@@ -1,5 +1,4 @@
-﻿using Application.RequestPagination;
-using MediatR;
+﻿using MediatR;
 
 namespace Application.Features.Queries.Product.GetAllProduct
 {

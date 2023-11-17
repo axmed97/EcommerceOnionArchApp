@@ -1,4 +1,4 @@
-﻿namespace Application.RequestPagination
+﻿namespace Application.RequestParameters
 {
     public record Pagination
     {

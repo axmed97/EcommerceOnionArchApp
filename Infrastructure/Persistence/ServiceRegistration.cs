@@ -4,6 +4,7 @@ using Application.Repositories.InvoiceFileRepositories;
 using Application.Repositories.OrderRepositories;
 using Application.Repositories.ProductImageFileRepositories;
 using Application.Repositories.ProductRepositories;
+using Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Context;
@@ -21,6 +22,8 @@ namespace Persistence
         public static void AddPersistenServices(this IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.ConnectionString));
+
+            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
                 
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
