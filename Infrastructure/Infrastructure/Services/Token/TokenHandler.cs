@@ -3,6 +3,7 @@ using Application.DTOs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Infrastructure.Services.Token
@@ -16,12 +17,12 @@ namespace Infrastructure.Services.Token
             _configuration = configuration;
         }
 
-        public TokenDTO CreateAccessToken(int minutes)
+        public TokenDTO CreateAccessToken(int seconds)
         {
             TokenDTO token = new();
             SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
             SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha512);
-            token.Expiration = DateTime.UtcNow.AddMinutes(minutes);
+            token.Expiration = DateTime.UtcNow.AddSeconds(seconds);
             JwtSecurityToken jwtSecurityToken = new(
                 audience: _configuration["Token:"],
                 issuer: _configuration["Token:"],
@@ -31,7 +32,16 @@ namespace Infrastructure.Services.Token
 
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
             token.AccessToken = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
+            token.RefreshToken = CreateRefreshToken();
             return token;
+        }
+
+        public string CreateRefreshToken()
+        {
+            byte[] number = new byte[32];
+            using var random = RandomNumberGenerator.Create();
+            random.GetBytes(number);
+            return Convert.ToBase64String(number);
         }
     }
 }

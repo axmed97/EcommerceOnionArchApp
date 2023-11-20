@@ -11,7 +11,6 @@ namespace WebAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
-
         public UsersController(IMediator mediator)
         {
             _mediator = mediator;
@@ -22,17 +21,6 @@ namespace WebAPI.Controllers
             var response = await _mediator.Send(registerUserCommandRequest);
             return Ok(response);
         }
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginUserCommandRequest loginUserCommandRequest)
-        {
-            var response = await _mediator.Send(loginUserCommandRequest);
-            return Ok(response);
-        }
-        [HttpPost("GoogleLogin")]
-        public async Task<IActionResult> GoogleLogin(GoogleLoginCommandRequest googleLoginCommandRequest)
-        {
-            var response = await _mediator.Send(googleLoginCommandRequest);
-            return Ok(response);
-        }
+        
     }
 }
