@@ -1,8 +1,10 @@
 ﻿using Application.Abstraction.Token;
 using Application.DTOs;
+using Domain.Entities.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -17,7 +19,7 @@ namespace Infrastructure.Services.Token
             _configuration = configuration;
         }
 
-        public TokenDTO CreateAccessToken(int seconds)
+        public TokenDTO CreateAccessToken(int seconds, AppUser appUser)
         {
             TokenDTO token = new();
             SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
@@ -28,7 +30,11 @@ namespace Infrastructure.Services.Token
                 issuer: _configuration["Token:"],
                 expires: token.Expiration, 
                 notBefore: DateTime.UtcNow,
-                signingCredentials: signingCredentials);
+                signingCredentials: signingCredentials,
+                claims: new List<Claim>
+                {
+                    new(ClaimTypes.Name, appUser.UserName)
+                });
 
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
             token.AccessToken = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);

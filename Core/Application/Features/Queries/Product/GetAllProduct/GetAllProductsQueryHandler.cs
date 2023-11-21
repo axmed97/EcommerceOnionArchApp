@@ -1,19 +1,23 @@
 ﻿using Application.Repositories.ProductRepositories;
+using Google.Apis.Logging;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Queries.Product.GetAllProduct
 {
     public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQueryRequest, GetAllProductsQueryResponse>
     {
         private readonly IProductReadRepository _productReadRepository;
-
-        public GetAllProductsQueryHandler(IProductReadRepository productReadRepository)
+        private readonly ILogger<GetAllProductsQueryHandler> _logger;
+        public GetAllProductsQueryHandler(IProductReadRepository productReadRepository, ILogger<GetAllProductsQueryHandler> logger)
         {
             _productReadRepository = productReadRepository;
+            _logger = logger;
         }
 
         public async Task<GetAllProductsQueryResponse> Handle(GetAllProductsQueryRequest request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Product Listed");
             var totalCount = _productReadRepository.GetAll(tracking: false).Count();
             var products = _productReadRepository.GetAll(tracking: false).Select(x => new
             {

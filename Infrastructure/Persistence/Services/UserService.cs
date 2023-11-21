@@ -8,11 +8,16 @@ namespace Persistence.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
+
+        public UserService(UserManager<AppUser> userManager)
+        {
+            _userManager = userManager;
+        }
 
         public async Task<RegisterUserResponseDTO> RegisterAsync(RegisterUserDTO registerUserDTO)
         {
-            Domain.Entities.Identity.AppUser appUser = new()
+            AppUser appUser = new()
             {
                 Id = Guid.NewGuid().ToString(),
                 UserName = registerUserDTO.Username,
@@ -40,7 +45,7 @@ namespace Persistence.Services
 
         public async Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate, int addOnAccessTokenDate)
         {
-            if(user != null)
+            if (user != null)
             {
                 user.RefreshToken = refreshToken;
                 user.RefreshTokenExpiredDate = accessTokenDate.AddSeconds(addOnAccessTokenDate);
