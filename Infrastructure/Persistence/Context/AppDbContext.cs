@@ -18,6 +18,20 @@ namespace Persistence.Context
         public DbSet<Domain.Entities.File> Files { get; set; }
         public DbSet<ProductImageFile> ProductImageFiles { get; set; }
         public DbSet<InvoiceFile> InvoiceFiles { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
+        public DbSet<BasketItem> BasketItems { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Order>()
+                .HasKey(x => x.Id);
+
+            builder.Entity<Basket>()
+                .HasOne(x => x.Order)
+                .WithOne(x => x.Basket)
+                .HasForeignKey<Order>(x => x.Id);
+        }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var datas = ChangeTracker.Entries<BaseEntity>();

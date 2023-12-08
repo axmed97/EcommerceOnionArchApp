@@ -21,23 +21,26 @@ namespace Infrastructure.Services.Token
 
         public TokenDTO CreateAccessToken(int seconds, AppUser appUser)
         {
-            TokenDTO token = new();
-            SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
-            SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha512);
+            Application.DTOs.TokenDTO token = new();
+
+            SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
+
+            SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
+
             token.Expiration = DateTime.UtcNow.AddSeconds(seconds);
-            JwtSecurityToken jwtSecurityToken = new(
-                audience: _configuration["Token:"],
-                issuer: _configuration["Token:"],
-                expires: token.Expiration, 
+            JwtSecurityToken securityToken = new(
+                audience: _configuration["Token:Audience"],
+                issuer: _configuration["Token:Issuer"],
+                expires: token.Expiration,
                 notBefore: DateTime.UtcNow,
                 signingCredentials: signingCredentials,
-                claims: new List<Claim>
-                {
-                    new(ClaimTypes.Name, appUser.UserName)
-                });
+                claims: new List<Claim> { new(ClaimTypes.Name, appUser.UserName) }
+                );
 
-            JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
-            token.AccessToken = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
+            JwtSecurityTokenHandler tokenHandler = new();
+            token.AccessToken = tokenHandler.WriteToken(securityToken);
+
+
             token.RefreshToken = CreateRefreshToken();
             return token;
         }
@@ -45,7 +48,7 @@ namespace Infrastructure.Services.Token
         public string CreateRefreshToken()
         {
             byte[] number = new byte[32];
-            using var random = RandomNumberGenerator.Create();
+            using RandomNumberGenerator random = RandomNumberGenerator.Create();
             random.GetBytes(number);
             return Convert.ToBase64String(number);
         }

@@ -1,4 +1,5 @@
-﻿using Application.Features.Commands.Product.CreateProduct;
+﻿using Application.Features.Commands.Product.ChangeShowCaseImage;
+using Application.Features.Commands.Product.CreateProduct;
 using Application.Features.Commands.Product.UpdateProduct;
 using Application.Features.Commands.ProductImageFile.RemoveProductImageFile;
 using Application.Features.Commands.ProductImageFile.UploadProductImageFile;
@@ -32,6 +33,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] GetAllProductsQueryRequest getAllProductsQueryRequest)
         {
+
             var response = await _mediator.Send(getAllProductsQueryRequest);
             return Ok(response);
         }
@@ -81,6 +83,12 @@ namespace WebAPI.Controllers
             removeProductImageFileCommandRequest.ImageId = imageId;
             var response = await _mediator.Send(removeProductImageFileCommandRequest);
             return Ok();
+        }
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ChangeShowCase([FromQuery]ChangeShowCaseImageCommandRequest changeShowCaseImageCommandRequest)
+        {
+            var response = await _mediator.Send(changeShowCaseImageCommandRequest);
+            return Ok(response);
         }
     }
 }
